@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>PNG to PDF converter</title>
+  </head>
+  <body>
+    <div>
+        <h2>PNG to PDF converter</h2>
+        <form>
+            <input type="file" id="pngFile" accept=".png">
+            <br><br>
+            <button type="button" onclick="convertToPDF()">Convert to PDF</button>
+            <br><br>
+            <span id="error"></span>
+        </form>
+    </div>
+    <script>
+        function convertToPDF() {
+            var pngFile = document.getElementById("pngFile").files[0];
+            var error = document.getElementById("error");
+            if (pngFile) {
+                if (pngFile.type === "image/png" && pngFile.size <= 5000000) {
+                    var formData = new FormData();
+                    formData.append("image", pngFile);
+                    fetch("/api/pngtopdf", {
+                        method: "POST",
+                        body: formData
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            return response.json();
+                        } else {
+                            error.innerHTML = "Error converting image to PDF";
+                        }
+                    })
+                    .then(data => {
+                        // do something with the returned data
+                    })
+                    .catch(error => {
+                        console.log(error);
+                    });
+                } else {
+                    error.innerHTML = "Please select a PNG image less than 5 MB";
+                }
+            } else {
+                error.innerHTML = "Please select an image to convert";
+            }
+        }
+    </script>
+  </body>
+</html>

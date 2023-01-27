@@ -1,0 +1,7 @@
+Code for Python, Flask server.
+Add route "/" with GET method and return index.html
+Add route "/jpgtopng" with GET method and return jpgtopng.html
+Add route "/pngtojpg" with GET method and return pngtojpg.html
+Add route "/webptopng" with GET method and return webptopng.html
+Add route "/bmptopng" with GET method and return bmptopng.html
+Add route "/pngtopdf" with GET method and return pngtopdf.html

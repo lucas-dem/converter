@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>PNG to JPG Converter</title>
+    <script>
+        function checkImage() {
+            var image = document.getElementById("image").files[0];
+            if (!image) {
+                alert("Please select an image.");
+                return;
+            }
+            if (image.type != "image/png") {
+                alert("Image must be in PNG format.");
+                return;
+            }
+            if (image.size > 5000000) {
+                alert("Image must be less than 5MB.");
+                return;
+            }
+            var formData = new FormData();
+            formData.append("image", image);
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "/api/pngtojpg", true);
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    alert("Image converted to JPG.");
+                } else {
+                    alert("Error converting image. Please try again.");
+                }
+            };
+            xhr.send(formData);
+        }
+    </script>
+</head>
+<body>
+    <h1>PNG to JPG Converter</h1>
+    <form>
+        <input type="file" id="image" accept="image/png" required>
+        <br>
+        <button type="button" onclick="checkImage()">Convert to JPG</button>
+    </form>
+</body>
+</html>
