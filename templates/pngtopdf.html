@@ -1,51 +1,67 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>PNG to PDF converter</title>
-  </head>
-  <body>
+<head>
+  <title>Convert PNG to PDF</title>
+</head>
+<body>
+  <h1>Convert PNG to PDF</h1>
+
+  <form>
     <div>
-        <h2>PNG to PDF converter</h2>
-        <form>
-            <input type="file" id="pngFile" accept=".png">
-            <br><br>
-            <button type="button" onclick="convertToPDF()">Convert to PDF</button>
-            <br><br>
-            <span id="error"></span>
-        </form>
+      <input type="file" id="imageInput"/>
     </div>
-    <script>
-        function convertToPDF() {
-            var pngFile = document.getElementById("pngFile").files[0];
-            var error = document.getElementById("error");
-            if (pngFile) {
-                if (pngFile.type === "image/png" && pngFile.size <= 5000000) {
-                    var formData = new FormData();
-                    formData.append("image", pngFile);
-                    fetch("/api/pngtopdf", {
-                        method: "POST",
-                        body: formData
-                    })
-                    .then(response => {
-                        if (response.ok) {
-                            return response.json();
-                        } else {
-                            error.innerHTML = "Error converting image to PDF";
-                        }
-                    })
-                    .then(data => {
-                        // do something with the returned data
-                    })
-                    .catch(error => {
-                        console.log(error);
-                    });
-                } else {
-                    error.innerHTML = "Please select a PNG image less than 5 MB";
-                }
-            } else {
-                error.innerHTML = "Please select an image to convert";
-            }
-        }
-    </script>
-  </body>
+    <br>
+    <div>
+      <button id="convertBtn">Convert to PDF</button>
+    </div>
+  </form>
+  <br>
+  <div id="errorMessage" style="display:none; color:red"></div>
+
+  <script>
+    const convertBtn = document.getElementById("convertBtn");
+    const imageInput = document.getElementById("imageInput");
+    const errorMessage = document.getElementById("errorMessage");
+
+    convertBtn.addEventListener("click", async (event) => {
+      event.preventDefault();
+      errorMessage.style.display = "none";
+
+      if (!imageInput.files[0]) {
+        errorMessage.innerHTML = "Please select an image";
+        errorMessage.style.display = "block";
+        return;
+      }
+
+      if (imageInput.files[0].type !== "image/png") {
+        errorMessage.innerHTML = "Selected file is not a PNG image";
+        errorMessage.style.display = "block";
+        return;
+      }
+
+      if (imageInput.files[0].size > 5000000) {
+        errorMessage.innerHTML = "Image size should be less than 5 MB";
+        errorMessage.style.display = "block";
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("image", imageInput.files[0]);
+
+      const response = await fetch("/api/pngtopdf", {
+        method: "POST",
+        body: formData
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        // Handle successful conversion
+      } else {
+        errorMessage.innerHTML = "Error converting image";
+        errorMessage.style.display = "block";
+      }
+    });
+  </script>
+</body>
 </html>

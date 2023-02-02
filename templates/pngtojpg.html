@@ -1,43 +1,67 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>PNG to JPG Converter</title>
-    <script>
-        function checkImage() {
-            var image = document.getElementById("image").files[0];
-            if (!image) {
-                alert("Please select an image.");
-                return;
-            }
-            if (image.type != "image/png") {
-                alert("Image must be in PNG format.");
-                return;
-            }
-            if (image.size > 5000000) {
-                alert("Image must be less than 5MB.");
-                return;
-            }
-            var formData = new FormData();
-            formData.append("image", image);
-            var xhr = new XMLHttpRequest();
-            xhr.open("POST", "/api/pngtojpg", true);
-            xhr.onload = function() {
-                if (xhr.status === 200) {
-                    alert("Image converted to JPG.");
-                } else {
-                    alert("Error converting image. Please try again.");
-                }
-            };
-            xhr.send(formData);
-        }
-    </script>
+  <title>Convert PNG to JPG</title>
 </head>
 <body>
-    <h1>PNG to JPG Converter</h1>
-    <form>
-        <input type="file" id="image" accept="image/png" required>
-        <br>
-        <button type="button" onclick="checkImage()">Convert to JPG</button>
-    </form>
+  <h1>Convert PNG to JPG</h1>
+
+  <form>
+    <div>
+      <input type="file" id="imageInput"/>
+    </div>
+    <br>
+    <div>
+      <button id="convertBtn">Convert to JPG</button>
+    </div>
+  </form>
+  <br>
+  <div id="errorMessage" style="display:none; color:red"></div>
+
+  <script>
+    const convertBtn = document.getElementById("convertBtn");
+    const imageInput = document.getElementById("imageInput");
+    const errorMessage = document.getElementById("errorMessage");
+
+    convertBtn.addEventListener("click", async (event) => {
+      event.preventDefault();
+      errorMessage.style.display = "none";
+
+      if (!imageInput.files[0]) {
+        errorMessage.innerHTML = "Please select an image";
+        errorMessage.style.display = "block";
+        return;
+      }
+
+      if (imageInput.files[0].type !== "image/png") {
+        errorMessage.innerHTML = "Selected file is not a PNG image";
+        errorMessage.style.display = "block";
+        return;
+      }
+
+      if (imageInput.files[0].size > 5000000) {
+        errorMessage.innerHTML = "Image size should be less than 5 MB";
+        errorMessage.style.display = "block";
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("image", imageInput.files[0]);
+
+      const response = await fetch("/api/pngtojpg", {
+        method: "POST",
+        body: formData
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        // Handle successful conversion
+      } else {
+        errorMessage.innerHTML = "Error converting image";
+        errorMessage.style.display = "block";
+      }
+    });
+  </script>
 </body>
 </html>

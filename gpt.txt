@@ -5,3 +5,44 @@ Add route "/pngtojpg" with GET method and return pngtojpg.html
 Add route "/webptopng" with GET method and return webptopng.html
 Add route "/bmptopng" with GET method and return bmptopng.html
 Add route "/pngtopdf" with GET method and return pngtopdf.html
+
+
+Code for jpgtopng.html file.
+Display input form , so user can select image from their computer.
+Also add "Convert to PNG" button.
+onclick button, check if image is selected and image is jpg format
+and less than 5 MB
+if true then send POST request to route "api/jpgtopng" with image 
+as parameter
+else show relevant error like select a image or image is not jpg
+format
+
+Code for pngtojpg.html file.
+Display input form , so user can select image from their computer.
+Also add "Convert to JPG" button.
+onclick button, check if image is selected and image is png format
+and less than 5 MB
+if true then send POST request to route "api/pngtojpg" with image 
+as parameter
+else show relevant error like select a image or image is not png
+format
+
+Code for pngtopdf.html file.
+Display input form , so user can select image from their computer.
+Also add "Convert to PDF" button.
+onclick button, check if image is selected and image is png format
+and less than 5 MB
+if true then send POST request to route "api/pngtopdf" with image 
+as parameter
+else show relevant error like select a image or image is not png
+format
+
+Code for bmptopng.html file.
+Display input form , so user can select image from their computer.
+Also add "Convert to PNG" button.
+onclick button, check if image is selected and image is bmp format
+and less than 5 MB
+if true then send POST request to route "api/bmptopng" with image 
+as parameter
+else show relevant error like select a image or image is not bmp
+format

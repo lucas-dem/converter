@@ -1,9 +1,16 @@
 from flask import Flask, render_template, request, Response, send_file
-import imageio
+import imageio.v2 as imageio
 from PIL import Image
 import io
+from reportlab.pdfgen import canvas
+from io import BytesIO
+
 
 app = Flask(__name__)
+
+import base64
+
+import base64
 
 @app.route('/api/jpgtopng', methods=['POST'])
 def jpg_to_png():
@@ -29,10 +36,18 @@ def jpg_to_png():
     # Save the image as a PNG file
     imageio.imwrite("converted_image.png", image, format='png')
 
-    # Create a Response object with the PNG image
-    response = Response(image, content_type='image/png')
-    response.headers["Content-Disposition"] = "attachment; filename=image.png"
+    # Read the converted image and encode it in base64 format
+    with open("converted_image.png", "rb") as image_file:
+        encoded_string = base64.b64encode(image_file.read()).decode("utf-8")
+        
+    # Return the decoded image in the response
+    response = Response(base64.b64decode(encoded_string), content_type='image/png')
+    response.headers['Content-Disposition'] = 'attachment; filename=converted_image.png'
     return response
+
+
+
+
 
 @app.route('/api/pngtojpg', methods=['POST'])
 def png_to_jpg():
@@ -94,17 +109,20 @@ def bmp_to_png():
 def convert_png_to_pdf():
     # Get the PNG image from the request
     image = request.files['image']
-    
-    # Open the image and convert it to RGB mode
     img = Image.open(image)
     img = img.convert("RGB")
+
+    # Create a PDF document
+    pdf_buffer = BytesIO()
+    canvas_obj = canvas.Canvas(pdf_buffer)
     
-    # Convert the image to a PDF
-    pdf_buffer = io.BytesIO()
-    img.save(pdf_buffer, 'PDF', resolution=100.0)
+    # Draw the image on the PDF
+    canvas_obj.drawImage(img, 0, 0)
+    canvas_obj.save()
     pdf_buffer.seek(0)
-    response = Response(pdf_buffer.read(),content_type='application/pdf')
-    response.headers["Content-Disposition"] = "attachment; filename=image.pdf"
+
+    response = Response(pdf_buffer.getvalue(), content_type='application/pdf')
+    response.headers.set("Content-Disposition", "attachment", filename="converted_file.pdf")
     return response
 
 @app.route("/", methods=["GET"])
