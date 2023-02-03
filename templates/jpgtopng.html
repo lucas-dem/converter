@@ -1,6 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <style>
+    #convertedImage {
+      width: 300px; /* specify the width */
+      height: auto; /* maintain the aspect ratio */
+      display: block; /* make the image display as a block */
+      margin: 0 auto; /* center the image horizontally */
+    }
+  </style>
   <title>Convert JPG to PNG</title>
 </head>
 <body>
@@ -17,15 +25,25 @@
   </form>
   <br>
   <div id="errorMessage" style="display:none; color:red"></div>
+  <br>
+  <div id="convertedImageContainer" style="display:none">
+    <a id="downloadLink" href="#">
+      <img id="convertedImage"/>
+    </a>
+  </div>
 
   <script>
     const convertBtn = document.getElementById("convertBtn");
     const imageInput = document.getElementById("imageInput");
     const errorMessage = document.getElementById("errorMessage");
+    const convertedImageContainer = document.getElementById("convertedImageContainer");
+    const convertedImage = document.getElementById("convertedImage");
+    const downloadLink = document.getElementById("downloadLink");
 
     convertBtn.addEventListener("click", async (event) => {
       event.preventDefault();
       errorMessage.style.display = "none";
+      convertedImageContainer.style.display = "none";
 
       if (!imageInput.files[0]) {
         errorMessage.innerHTML = "Please select an image";
@@ -59,7 +77,10 @@
         }
 
         const data = await response.json();
-        console.log(data);
+        convertedImage.src = "data:image/png;base64," + data.image;
+        downloadLink.href = "data:image/png;base64," + data.image;
+        downloadLink.download = "converted_image.png";
+        convertedImageContainer.style.display = "block";
       } catch (error) {
         console.error(error);
         errorMessage.innerHTML = "An error occurred while converting the image";

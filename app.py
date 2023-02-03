@@ -1,16 +1,13 @@
-from flask import Flask, render_template, request, Response, send_file
+from flask import Flask, render_template, request, Response, send_file, json, make_response
 import imageio.v2 as imageio
 from PIL import Image
 import io
 from reportlab.pdfgen import canvas
 from io import BytesIO
-
+import base64
 
 app = Flask(__name__)
 
-import base64
-
-import base64
 
 @app.route('/api/jpgtopng', methods=['POST'])
 def jpg_to_png():
@@ -40,8 +37,8 @@ def jpg_to_png():
     with open("converted_image.png", "rb") as image_file:
         encoded_string = base64.b64encode(image_file.read()).decode("utf-8")
         
-    # Return the decoded image in the response
-    response = Response(base64.b64decode(encoded_string), content_type='image/png')
+    # Return the decoded image in the response as JSON
+    response = make_response(json.dumps({'image': encoded_string}))
     response.headers['Content-Disposition'] = 'attachment; filename=converted_image.png'
     return response
 

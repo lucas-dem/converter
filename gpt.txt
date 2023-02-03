@@ -46,3 +46,4 @@ if true then send POST request to route "api/bmptopng" with image
 as parameter
 else show relevant error like select a image or image is not bmp
 format
+
